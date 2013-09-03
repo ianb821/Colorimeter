@@ -79,14 +79,13 @@ public class ColorimeterFrame extends JFrame {
         
         public ColorimeterPanel() {
             
-            
             // add key bindings for ctl-c and cmd-c
             copyAction = new CopyAction();
             getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK), "copy");
             getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.META_DOWN_MASK), "copy");
             getActionMap().put("copy", copyAction);
             
-            
+            // setup the rest of the panel
             setLayout(null);
             setBackground(Color.LIGHT_GRAY);
             
@@ -108,11 +107,13 @@ public class ColorimeterFrame extends JFrame {
             setSize(340, 185);
             setFocusable(true);
             requestFocusInWindow();
+            
         }
         
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             
+            // make sure the panel has focus so that the keybindings work
             grabFocus();
             
             if (image != null) {
@@ -146,6 +147,7 @@ public class ColorimeterFrame extends JFrame {
                         g.drawString(String.format("B: %.4f", (color.getBlue() / 255.0)), 275, 150);
                         break;
                 }
+                
             } else {
                 g.drawString("R: ", 275, 100);
                 g.drawString("G: ", 274, 125);

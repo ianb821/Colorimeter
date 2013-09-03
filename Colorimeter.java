@@ -2,7 +2,7 @@
 * Colorimeter was inspired by the built-in Mac application
 * DigitalColor Meter.  It gives you the RGB color value of any
 * point on the screen in either 0-255 int values or 0.0-1.0 float
-* values.
+* values.  Press ctl-c or cmd-c to copy RGB values to system clipboard
 *
 * Ian Burns - 8/31/2013
 **************************************************************/
@@ -25,7 +25,9 @@ public class Colorimeter {
         screen = new ColorimeterFrame("Colorimeter");
         
         while (true) {
+            
             point = MouseInfo.getPointerInfo().getLocation();
+            
             screenRect = new Rectangle((int)(point.getX() - 7), (int)(point.getY() - 7), 15, 15);
             
             screen.setColor(robot.getPixelColor((int)point.getX(), (int)point.getY()));
@@ -45,8 +47,8 @@ public class Colorimeter {
     }
     
     public static void copyColorToClipboard() {
-        Color color = screen.getColor();
         
+        Color color = screen.getColor();
         StringSelection stringSelection;
         
         if (screen.useFloats()) {
@@ -54,8 +56,9 @@ public class Colorimeter {
         } else {
             stringSelection = new StringSelection ("R: " + color.getRed() + " G: " + color.getGreen() + " B: " + color.getBlue());
         }
-        Clipboard clpbrd = Toolkit.getDefaultToolkit ().getSystemClipboard ();
-        clpbrd.setContents (stringSelection, null);
+        
+        Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clpbrd.setContents(stringSelection, null);
     }
 }
 
