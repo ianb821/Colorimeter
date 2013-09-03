@@ -1,7 +1,7 @@
 Colorimeter
 ===========
 
-A Colorimeter that gives you RGB values for any point on your screen in either integer or float format.
+A Colorimeter that gives you RGB values for any point on your screen in either integer or float format.  Press CTL-C or CMD-C to copy current values into the clipboard.
 
 ![Integer](https://raw.github.com/ianb821/Colorimeter/master/Pictures/ColorimeterPictureOne.tiff)
 
@@ -29,5 +29,4 @@ jar cvfe Colorimeter.jar Colorimeter *.class
 
 ##Upcoming Features:
 
- - Keyboard shortcut to copy RGB values to clipboard
  - Option to click to save current RGB values to clipboard
