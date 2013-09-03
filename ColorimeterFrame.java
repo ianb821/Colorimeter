@@ -8,13 +8,11 @@
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
-import java.awt.datatransfer.*;
 import java.awt.image.BufferedImage;
 
 public class ColorimeterFrame extends JFrame {
 
     private ColorimeterPanel colorimeterPanel;
-    public static JRadioButton floatButton;
     
     public ColorimeterFrame() {
         super("Default");
@@ -29,27 +27,7 @@ public class ColorimeterFrame extends JFrame {
         setResizable(false);
         
         colorimeterPanel = new ColorimeterPanel();
-        colorimeterPanel.setLayout(null);
-        colorimeterPanel.setBackground(Color.LIGHT_GRAY);
         
-        JLabel scaleLabel = new JLabel("Scale for RGB values:");
-        floatButton = new JRadioButton("0.0 - 1.0");
-        JRadioButton intButton = new JRadioButton("0 - 255");
-        ButtonGroup group = new ButtonGroup();
-        group.add(floatButton);
-        group.add(intButton);
-        
-        intButton.setBounds(200, 25, 100, 25);
-        floatButton.setBounds(200, 45, 100, 25);
-        scaleLabel.setBounds(180, 5, 200, 25);
-        intButton.setSelected(true);
-        
-        colorimeterPanel.add(floatButton);
-        colorimeterPanel.add(intButton);
-        colorimeterPanel.add(scaleLabel);
-        colorimeterPanel.setSize(340, 185);
-        colorimeterPanel.setFocusable(true);
-        colorimeterPanel.requestFocusInWindow();
         
         setContentPane(colorimeterPanel);
         setLocationRelativeTo(null);
@@ -73,8 +51,22 @@ public class ColorimeterFrame extends JFrame {
         colorimeterPanel.setColorValues(value);
     }
     
+    public Color getColor() {
+        return colorimeterPanel.getColor();
+    }
+    
     public boolean useFloats() {
-        return floatButton.isSelected();
+        return colorimeterPanel.useFloats();
+    }
+    
+    private class CopyAction extends AbstractAction {
+        public CopyAction() {
+            super();
+        }
+        public void actionPerformed(ActionEvent e) {
+            Colorimeter.copyColorToClipboard();
+          
+        }
     }
     
     private class ColorimeterPanel extends JPanel {
@@ -82,24 +74,46 @@ public class ColorimeterFrame extends JFrame {
         private Color color;
         private BufferedImage image;
         private int colorValues;
-        
+        private CopyAction copyAction;
+        private JRadioButton floatButton;
         
         public ColorimeterPanel() {
-            Action a = new AbstractAction() {
-                private static final long serialVersionUID = 1L;
-                @Override public void actionPerformed(ActionEvent e) {
-                    System.out.println("Herp");
-                }
-            };
             
-            KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_C, Event.CTRL_MASK);
-            this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key, a);
-            this.getActionMap().put("ESCAPE", a);
+            
+            // add key bindings for ctl-c and cmd-c
+            copyAction = new CopyAction();
+            getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK), "copy");
+            getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.META_DOWN_MASK), "copy");
+            getActionMap().put("copy", copyAction);
+            
+            
+            setLayout(null);
+            setBackground(Color.LIGHT_GRAY);
+            
+            JLabel scaleLabel = new JLabel("Scale for RGB values:");
+            floatButton = new JRadioButton("0.0 - 1.0");
+            JRadioButton intButton = new JRadioButton("0 - 255");
+            ButtonGroup group = new ButtonGroup();
+            group.add(floatButton);
+            group.add(intButton);
+            
+            intButton.setBounds(200, 25, 100, 25);
+            floatButton.setBounds(200, 45, 100, 25);
+            scaleLabel.setBounds(180, 5, 200, 25);
+            intButton.setSelected(true);
+            
+            add(floatButton);
+            add(intButton);
+            add(scaleLabel);
+            setSize(340, 185);
+            setFocusable(true);
+            requestFocusInWindow();
         }
         
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             
+            grabFocus();
             
             if (image != null) {
                 g.drawImage(image, 10, 6, 150, 150, null);
@@ -139,8 +153,16 @@ public class ColorimeterFrame extends JFrame {
             }
         }
         
+        public boolean useFloats() {
+            return this.floatButton.isSelected();
+        }
+        
         public void setColor(Color color) {
             this.color = color;
+        }
+        
+        public Color getColor() {
+            return this.color;
         }
         
         public void setImage(BufferedImage image) {
@@ -149,19 +171,6 @@ public class ColorimeterFrame extends JFrame {
         
         public void setColorValues(int value) {
             this.colorValues = value;
-        }
-        
-        public void copyCurrentValueToClipboard() {
-            
-            StringSelection stringSelection;
-            
-            if (colorValues == 1) {
-                stringSelection = new StringSelection (String.format("R: %.4f G: %.4f B: %.4f", color.getRed() / 255.0, color.getGreen() / 255.0, color.getBlue() / 255.0));
-            } else {
-                stringSelection = new StringSelection ("R: " + color.getRed() + " G: " + color.getGreen() + " B: " + color.getBlue());
-            }
-            Clipboard clpbrd = Toolkit.getDefaultToolkit ().getSystemClipboard ();
-            clpbrd.setContents (stringSelection, null);
         }
     }
 }

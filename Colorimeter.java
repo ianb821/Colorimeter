@@ -9,17 +9,20 @@
 
 import java.awt.*;
 import javax.swing.*;
+import java.awt.datatransfer.*;
 
 public class Colorimeter {
     
-    public static Point point;
-    public static Rectangle screenRect;
-    public static Robot robot;
+    private static Point point;
+    private static Rectangle screenRect;
+    private static Robot robot;
+    private static ColorimeterFrame screen;
+    
 
 	public static void main(String[] args) throws AWTException {
         
         robot = new Robot();
-        ColorimeterFrame screen = new ColorimeterFrame("Colorimeter");
+        screen = new ColorimeterFrame("Colorimeter");
         
         while (true) {
             point = MouseInfo.getPointerInfo().getLocation();
@@ -37,13 +40,23 @@ public class Colorimeter {
             
             screen.refresh();
             
-
-            
             robot.delay(20);
         }
-	}
+    }
     
-    
+    public static void copyColorToClipboard() {
+        Color color = screen.getColor();
+        
+        StringSelection stringSelection;
+        
+        if (screen.useFloats()) {
+            stringSelection = new StringSelection (String.format("R: %.4f G: %.4f B: %.4f", color.getRed() / 255.0, color.getGreen() / 255.0, color.getBlue() / 255.0));
+        } else {
+            stringSelection = new StringSelection ("R: " + color.getRed() + " G: " + color.getGreen() + " B: " + color.getBlue());
+        }
+        Clipboard clpbrd = Toolkit.getDefaultToolkit ().getSystemClipboard ();
+        clpbrd.setContents (stringSelection, null);
+    }
 }
 
 
