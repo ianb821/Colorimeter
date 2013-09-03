@@ -69,11 +69,6 @@ public class Colorimeter {
             
             colorimeterPanel.repaint();
             
-//            Color color = robot.getPixelColor((int)point.getX(), (int)point.getY());
-//            StringSelection stringSelection = new StringSelection (String.format("R: %.4f G: %.4f B: %.4f", color.getRed() / 255.0, color.getGreen() / 255.0, color.getBlue() / 255.0));
-//            Clipboard clpbrd = Toolkit.getDefaultToolkit ().getSystemClipboard ();
-//            clpbrd.setContents (stringSelection, null);
-            
             robot.delay(20);
         }
 	}
